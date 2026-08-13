@@ -1,3 +1,4 @@
+import ompularLogo from "@/assets/ompular-logo.jpg.asset.json";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({

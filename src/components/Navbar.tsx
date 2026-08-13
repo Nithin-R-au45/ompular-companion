@@ -1,3 +1,4 @@
+import ompularLogo from "@/assets/ompular-logo.jpg.asset.json";
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/useAuth";
