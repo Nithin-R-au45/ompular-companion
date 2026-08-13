@@ -48,7 +48,7 @@ export default function Navbar() {
 
       <nav className="navbar">
         <Link to="/" className="navbar-brand" onClick={closeMenu}>
-          <img src="/ompular-logo.jpg" alt="Ompular" className="navbar-logo-img" />
+          <img src={ompularLogo.url} alt="Ompular" className="navbar-logo-img" />
           <span className="navbar-brand-name">ompular</span>
         </Link>
 

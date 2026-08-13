@@ -47,7 +47,7 @@ function LoginPage() {
       <div className="auth-card">
         <div className="auth-header">
           <Link to="/" className="auth-logo-wrap">
-            <img src="/ompular-logo.jpg" alt="Ompular" className="auth-logo-img" />
+            <img src={ompularLogo.url} alt="Ompular" className="auth-logo-img" />
             <span className="auth-logo-name">ompular</span>
           </Link>
           <h1>Welcome Back</h1>
