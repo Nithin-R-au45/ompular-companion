@@ -1,3 +1,4 @@
+import ompularLogo from "@/assets/ompular-logo.jpg.asset.json";
 import { useState, type FormEvent } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/useAuth";
@@ -53,7 +54,7 @@ function RegisterPage() {
       <div className="auth-card">
         <div className="auth-header">
           <Link to="/" className="auth-logo-wrap">
-            <img src="/ompular-logo.jpg" alt="Ompular" className="auth-logo-img" />
+            <img src={ompularLogo.url} alt="Ompular" className="auth-logo-img" />
             <span className="auth-logo-name">ompular</span>
           </Link>
           <h1>Create Account</h1>

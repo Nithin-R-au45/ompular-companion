@@ -1,3 +1,4 @@
+import ompularLogo from "@/assets/ompular-logo.jpg.asset.json";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
@@ -27,7 +28,7 @@ function Landing() {
     <div className="landing">
       <section className="hero-section">
         <div className="hero-logo-wrap">
-          <img src="/ompular-logo.jpg" alt="Ompular Logo" className="hero-logo-img" />
+          <img src={ompularLogo.url} alt="Ompular Logo" className="hero-logo-img" />
         </div>
 
         <div className="hero-badge">✨ AI-Powered Matchmaking</div>
@@ -146,7 +147,7 @@ function Landing() {
 
       <footer className="footer">
         <div className="footer-logo">
-          <img src="/ompular-logo.jpg" alt="Ompular" className="footer-logo-img" />
+          <img src={ompularLogo.url} alt="Ompular" className="footer-logo-img" />
           <span className="footer-brand">ompular</span>
         </div>
         <p>© 2026 Ompular. Built with ❤️ to connect curious minds.</p>
