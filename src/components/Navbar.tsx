@@ -1,4 +1,4 @@
-import ompularLogo from "@/assets/ompular-logo.jpg.asset.json";
+import ompularLogo from "@/assets/ompular-mark.png";
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/useAuth";
@@ -49,7 +49,7 @@ export default function Navbar() {
 
       <nav className="navbar">
         <Link to="/" className="navbar-brand" onClick={closeMenu}>
-          <img src={ompularLogo.url} alt="Ompular" className="navbar-logo-img" />
+          <img src={ompularLogo} alt="Ompular" className="navbar-logo-img" />
           <span className="navbar-brand-name">ompular</span>
         </Link>
 
