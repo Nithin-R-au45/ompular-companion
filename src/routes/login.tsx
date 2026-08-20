@@ -2,6 +2,7 @@ import ompularLogo from "@/assets/ompular-mark.png";
 import { useState, type FormEvent } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/useAuth";
+import { reportAuthEvent } from "@/lib/auth-log";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -35,8 +36,10 @@ function LoginPage() {
     setLoading(true);
     try {
       await login(form.email, form.password);
+      reportAuthEvent("login", "success", { email: form.email });
       void navigate({ to: "/dashboard" });
     } catch (err) {
+      reportAuthEvent("login", "failure", { email: form.email, error: err });
       setError(err instanceof Error ? err.message : "Invalid email or password.");
     } finally {
       setLoading(false);
