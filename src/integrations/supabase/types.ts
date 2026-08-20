@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      auth_event_logs: {
+        Row: {
+          created_at: string
+          email: string | null
+          error_code: string | null
+          error_message: string | null
+          event_type: string
+          id: string
+          outcome: string
+          path: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          error_code?: string | null
+          error_message?: string | null
+          event_type: string
+          id?: string
+          outcome?: string
+          path?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          error_code?: string | null
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          outcome?: string
+          path?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       matches: {
         Row: {
           created_at: string
