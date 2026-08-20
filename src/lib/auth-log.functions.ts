@@ -14,16 +14,13 @@ const schema = z.object({
   errorMessage: z.string().max(500).optional(),
   errorCode: z.string().max(120).optional(),
   path: z.string().max(300).optional(),
+  userAgent: z.string().max(400).optional(),
 });
 
 // Intentionally unauthenticated: these events happen before a session exists.
 export const logAuthEvent = createServerFn({ method: "POST" })
   .inputValidator((data) => schema.parse(data))
   .handler(async ({ data }) => {
-    const { getRequestHeader } = await import("@tanstack/react-start/server");
     const { recordAuthEvent } = await import("./auth-log.server");
-    return recordAuthEvent({
-      ...data,
-      userAgent: getRequestHeader("user-agent") ?? undefined,
-    });
+    return recordAuthEvent(data);
   });
