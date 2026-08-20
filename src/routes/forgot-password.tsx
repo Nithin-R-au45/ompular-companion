@@ -2,6 +2,7 @@ import ompularLogo from "@/assets/ompular-mark.png";
 import { useState, type FormEvent } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { reportAuthEvent } from "@/lib/auth-log";
 
 export const Route = createFileRoute("/forgot-password")({
   head: () => ({
@@ -35,8 +36,10 @@ function ForgotPasswordPage() {
         redirectTo: `${window.location.origin}/reset-password`,
       });
       if (resetError) throw new Error(resetError.message);
+      reportAuthEvent("password_reset_request", "success", { email });
       setSent(true);
     } catch (err) {
+      reportAuthEvent("password_reset_request", "failure", { email, error: err });
       setError(err instanceof Error ? err.message : "Could not send the reset link.");
     } finally {
       setLoading(false);

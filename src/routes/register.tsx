@@ -2,6 +2,7 @@ import ompularLogo from "@/assets/ompular-mark.png";
 import { useState, type FormEvent } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/useAuth";
+import { reportAuthEvent } from "@/lib/auth-log";
 
 export const Route = createFileRoute("/register")({
   head: () => ({
@@ -41,8 +42,10 @@ function RegisterPage() {
     setLoading(true);
     try {
       await register(form.name, form.email, form.password, Number(form.age) || 0, form.bio);
+      reportAuthEvent("signup", "success", { email: form.email });
       void navigate({ to: "/dashboard" });
     } catch (err) {
+      reportAuthEvent("signup", "failure", { email: form.email, error: err });
       setError(err instanceof Error ? err.message : "Registration failed. Please try again.");
     } finally {
       setLoading(false);

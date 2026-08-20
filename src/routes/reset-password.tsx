@@ -2,6 +2,7 @@ import ompularLogo from "@/assets/ompular-mark.png";
 import { useEffect, useState, type FormEvent } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { reportAuthEvent } from "@/lib/auth-log";
 
 export const Route = createFileRoute("/reset-password")({
   ssr: false,
@@ -40,6 +41,9 @@ function ResetPasswordPage() {
     e.preventDefault();
     setError("");
     if (password !== confirm) {
+      reportAuthEvent("password_reset_update", "failure", {
+        error: new Error("Passwords do not match"),
+      });
       setError("Passwords do not match.");
       return;
     }
@@ -47,8 +51,10 @@ function ResetPasswordPage() {
     try {
       const { error: updateError } = await supabase.auth.updateUser({ password });
       if (updateError) throw new Error(updateError.message);
+      reportAuthEvent("password_reset_update", "success");
       void navigate({ to: "/dashboard" });
     } catch (err) {
+      reportAuthEvent("password_reset_update", "failure", { error: err });
       setError(err instanceof Error ? err.message : "Could not update your password.");
     } finally {
       setLoading(false);
