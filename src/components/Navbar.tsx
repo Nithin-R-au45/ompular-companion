@@ -4,6 +4,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/useAuth";
 import { useNotifications } from "@/hooks/useNotifications";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
+import { useHardRefresh } from "@/hooks/useHardRefresh";
 
 export default function Navbar() {
   const { isAuthenticated, user, logout } = useAuth();
