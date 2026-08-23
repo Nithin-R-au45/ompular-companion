@@ -351,6 +351,25 @@ input, textarea, select { font-family: 'Nunito', sans-serif; }
   padding: 5px 12px; border-radius: var(--radius-sm);
 }
 
+/* ===== HARD REFRESH BUTTON ===== */
+.btn-refresh {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--text-muted);
+  padding: 6px 14px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 700; font-family: 'Nunito', sans-serif;
+  transition: all 0.2s; cursor: pointer;
+}
+.btn-refresh:hover:not(:disabled) {
+  border-color: var(--brand-cyan);
+  color: var(--brand-cyan);
+}
+.btn-refresh:disabled { opacity: 0.6; cursor: default; }
+.btn-refresh-icon { font-size: 15px; display: inline-block; }
+.btn-refresh-icon.spinning { animation: spin-refresh 0.8s linear infinite; }
+@keyframes spin-refresh { to { transform: rotate(360deg); } }
+
 /* ===== LANDING ===== */
 .landing { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 .hero-section { text-align: center; padding: 96px 0 80px; }
