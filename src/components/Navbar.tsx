@@ -4,12 +4,14 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/useAuth";
 import { useNotifications } from "@/hooks/useNotifications";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
+import { useHardRefresh } from "@/hooks/useHardRefresh";
 
 export default function Navbar() {
   const { isAuthenticated, user, logout } = useAuth();
   const { unreadCount, toast, dismissToast } = useNotifications();
   const navigate = useNavigate();
   const { canInstall, isInstalled, install } = usePWAInstall();
+  const { hardRefresh, clearing } = useHardRefresh();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -77,6 +79,16 @@ export default function Navbar() {
               )}
               {isInstalled && <span className="installed-badge">✓ Installed</span>}
 
+              <button
+                className="btn-refresh"
+                onClick={() => void hardRefresh()}
+                disabled={clearing}
+                title="Clear cached data and reload"
+              >
+                <span className={`btn-refresh-icon ${clearing ? "spinning" : ""}`}>⟳</span>
+                {clearing ? "Clearing…" : "Refresh"}
+              </button>
+
               <button className="btn-outline-sm" onClick={handleLogout}>
                 Logout
               </button>
@@ -138,6 +150,16 @@ export default function Navbar() {
                 ✓ Installed
               </span>
             )}
+            <button
+              className="mobile-menu-install"
+              onClick={() => {
+                closeMenu();
+                void hardRefresh();
+              }}
+              disabled={clearing}
+            >
+              ⟳ {clearing ? "Clearing…" : "Hard Refresh & Clear Cache"}
+            </button>
             <button className="mobile-menu-logout" onClick={handleLogout}>
               Logout
             </button>
