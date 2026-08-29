@@ -14,7 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import Navbar from "@/components/Navbar";
 import RefreshFab from "@/components/RefreshFab";
 import { AuthProvider } from "@/hooks/useAuth";
-import { NotificationsProvider } from "@/hooks/useNotifications";
+import { NotificationsWrapper } from "@/components/NotificationsWrapper";
 
 
 function NotFoundComponent() {
@@ -138,12 +138,12 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <NotificationsProvider>
+        <NotificationsWrapper>
           <Navbar />
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
           <RefreshFab />
-        </NotificationsProvider>
+        </NotificationsWrapper>
       </AuthProvider>
     </QueryClientProvider>
   );

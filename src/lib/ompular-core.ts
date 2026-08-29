@@ -3,7 +3,6 @@ export type AiModel = "kimi-k3" | "qwen-38x" | "deepseek-v4-pro";
 export const AI_MODELS: AiModel[] = ["kimi-k3", "qwen-38x", "deepseek-v4-pro"];
 
 export const DAILY_PROMPT_LIMIT = 3;
-export const REVEAL_PRICE = 9;
 
 export const MODEL_INFO: Record<
   AiModel,
