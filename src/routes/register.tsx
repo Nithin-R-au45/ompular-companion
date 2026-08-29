@@ -64,6 +64,55 @@ function RegisterPage() {
     }
   };
 
+  const handleResend = async () => {
+    setResendState("sending");
+    try {
+      await resendVerification(form.email);
+      setResendState("sent");
+    } catch {
+      setResendState("idle");
+      setError("Couldn't resend the email right now — try again in a minute.");
+    }
+  };
+
+  if (registered) {
+    return (
+      <div className="auth-page">
+        <div className="auth-card">
+          <div className="auth-header">
+            <Link to="/" className="auth-logo-wrap">
+              <img src={ompularLogo} alt="Ompular" className="auth-logo-img" />
+              <span className="auth-logo-name">ompular</span>
+            </Link>
+            <h1>Verify Your Email ✉️</h1>
+            <p>
+              We sent a verification link to <strong>{form.email}</strong>. Click it to activate
+              your account, then sign in.
+            </p>
+          </div>
+
+          {error && <div className="error-box">{error}</div>}
+
+          <button
+            className="btn-primary btn-full"
+            onClick={handleResend}
+            disabled={resendState !== "idle"}
+          >
+            {resendState === "sending"
+              ? "Sending..."
+              : resendState === "sent"
+                ? "✓ Email resent — check your inbox"
+                : "Resend verification email"}
+          </button>
+
+          <p className="auth-switch">
+            Verified already? <Link to="/login">Sign in</Link>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="auth-page">
       <div className="auth-card">
