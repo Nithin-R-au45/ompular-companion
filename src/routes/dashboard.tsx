@@ -85,9 +85,9 @@ function DashboardPage() {
         <div className="stat-card">
           <div className="stat-icon">💡</div>
           <div className="stat-body">
-            <div className="stat-value accent">₹9</div>
+            <div className="stat-value accent">Free</div>
             <div className="stat-label">To reveal a match</div>
-            <div className="stat-sub">One-time per person</div>
+            <div className="stat-sub">No payments, ever</div>
           </div>
         </div>
       </div>

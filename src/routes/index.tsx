@@ -8,7 +8,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Chat with Kimi K3, Qwen 3.8x and DeepSeek v4 Pro at once and get matched with real people who share your curiosity. 3 free prompts a day, ₹9 per reveal.",
+          "Chat with Kimi K3, Qwen 3.8x and DeepSeek v4 Pro at once and get matched with real people who share your curiosity. 3 free prompts a day, free match reveals — no pricing, ever.",
       },
       { property: "og:title", content: "Ompular — AI-Powered Matchmaking" },
       {
@@ -51,7 +51,7 @@ function Landing() {
           </Link>
         </div>
         <p className="hero-note">
-          3 free AI prompts per day &nbsp;·&nbsp; Reveal matches for just ₹9
+          3 free AI prompts per day &nbsp;·&nbsp; Reveal matches free &nbsp;·&nbsp; No payments, ever
         </p>
       </section>
 
@@ -81,8 +81,8 @@ function Landing() {
             <div className="step-icon">🔓</div>
             <h3>Reveal &amp; Connect</h3>
             <p>
-              See a match you like? Pay just ₹9 to reveal their name and email, then connect
-              directly. No subscriptions, pay only for who interests you.
+              See a match you like? Reveal their name and email for free, then connect
+              directly. No subscriptions, no payments — everything is free.
             </p>
           </div>
         </div>
@@ -114,33 +114,21 @@ function Landing() {
       </section>
 
       <section className="pricing-section">
-        <h2 className="section-title">Simple Pricing</h2>
+        <h2 className="section-title">100% Free</h2>
         <div className="pricing-grid">
-          <div className="pricing-card">
-            <h3>Free</h3>
+          <div className="pricing-card featured">
+            <div className="featured-badge">No Pricing</div>
+            <h3>Everything Included</h3>
             <div className="price">₹0</div>
             <ul>
               <li>✓ 3 AI prompts per day</li>
-              <li>✓ Choose any model</li>
-              <li>✓ See your matches (blurred)</li>
-              <li>✓ Compatibility % visible</li>
+              <li>✓ All 3 models answer at once</li>
+              <li>✓ See your matches with compatibility %</li>
+              <li>✓ Reveal names &amp; emails free</li>
+              <li>✓ Unlimited DMs</li>
             </ul>
             <Link to="/register" className="btn-primary">
               Start Free
-            </Link>
-          </div>
-          <div className="pricing-card featured">
-            <div className="featured-badge">Per Reveal</div>
-            <h3>Reveal a Match</h3>
-            <div className="price">₹9</div>
-            <ul>
-              <li>✓ See their real name</li>
-              <li>✓ Get their email</li>
-              <li>✓ One-time per person</li>
-              <li>✓ No subscription</li>
-            </ul>
-            <Link to="/register" className="btn-primary">
-              Get Started
             </Link>
           </div>
         </div>
