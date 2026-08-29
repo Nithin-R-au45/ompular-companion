@@ -180,23 +180,27 @@ export async function getMatchesFor(userId: string): Promise<MatchItem[]> {
 export async function revealMatchFor(userId: string, matchedUserId: string) {
   if (userId === matchedUserId) throw new Error("You cannot reveal yourself.");
 
-  const { data: existingPayment } = await supabaseAdmin
-    .from("payments")
-    .select("id")
-    .eq("user_id", userId)
-    .eq("matched_user_id", matchedUserId)
-    .maybeSingle();
+  // Reveals are free — no payment required. Guard against double-reveal via
+  // the matches table (and legacy payments rows for previously paid reveals).
+  const [{ data: existingReveal }, { data: legacyPayment }] = await Promise.all([
+    supabaseAdmin
+      .from("matches")
+      .select("id")
+      .eq("seeker_id", userId)
+      .eq("matched_id", matchedUserId)
+      .eq("revealed", true)
+      .maybeSingle(),
+    supabaseAdmin
+      .from("payments")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("matched_user_id", matchedUserId)
+      .maybeSingle(),
+  ]);
 
-  if (existingPayment) {
+  if (existingReveal || legacyPayment) {
     return { alreadyRevealed: true, success: false, message: "Already revealed this person." };
   }
-
-  const { error: payError } = await supabaseAdmin.from("payments").insert({
-    user_id: userId,
-    matched_user_id: matchedUserId,
-    amount: REVEAL_PRICE,
-  });
-  if (payError) throw new Error(payError.message);
 
   const [{ data: seeker }, { data: matched }] = await Promise.all([
     supabaseAdmin.from("profiles").select("interests").eq("id", userId).maybeSingle(),
@@ -222,8 +226,8 @@ export async function revealMatchFor(userId: string, matchedUserId: string) {
   return {
     success: true,
     alreadyRevealed: false,
-    amount: REVEAL_PRICE,
-    message: "Payment successful! Person revealed.",
+    amount: 0,
+    message: "Match revealed — free!",
   };
 }
 
