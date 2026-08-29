@@ -5,9 +5,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNotifications } from "@/hooks/useNotifications";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
 import { useHardRefresh } from "@/hooks/useHardRefresh";
+import { useIsAdmin } from "@/hooks/useAdmin";
 
 export default function Navbar() {
   const { isAuthenticated, user, logout } = useAuth();
+  const { isAdmin } = useIsAdmin();
   const { unreadCount, toast, dismissToast } = useNotifications();
   const navigate = useNavigate();
   const { canInstall, isInstalled, install } = usePWAInstall();
@@ -66,6 +68,7 @@ export default function Navbar() {
               <Link to="/dashboard">Dashboard</Link>
               <Link to="/chat">AI Chat</Link>
               <Link to="/matches">Matches</Link>
+              {isAdmin && <Link to="/admin">Admin</Link>}
 
               <Link to="/matches" className="notif-bell" title="Messages">
                 <span className="notif-bell-icon">💬</span>
@@ -137,6 +140,11 @@ export default function Navbar() {
               🔍 Matches
               {unreadCount > 0 && <span className="mobile-badge">{unreadCount}</span>}
             </Link>
+            {isAdmin && (
+              <Link to="/admin" onClick={closeMenu}>
+                🛡️ Admin
+              </Link>
+            )}
             <div className="mobile-menu-divider" />
             <span className="mobile-menu-user">👤 {user?.name}</span>
             {canInstall && (
