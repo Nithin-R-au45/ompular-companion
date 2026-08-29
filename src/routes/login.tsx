@@ -19,12 +19,14 @@ export const Route = createFileRoute("/login")({
 });
 
 function LoginPage() {
-  const { login } = useAuth();
+  const { login, resendVerification } = useAuth();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [unconfirmed, setUnconfirmed] = useState(false);
+  const [resendState, setResendState] = useState<"idle" | "sending" | "sent">("idle");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -40,9 +42,26 @@ function LoginPage() {
       void navigate({ to: "/dashboard" });
     } catch (err) {
       reportAuthEvent("login", "failure", { email: form.email, error: err });
-      setError(err instanceof Error ? err.message : "Invalid email or password.");
+      const message = err instanceof Error ? err.message : "Invalid email or password.";
+      if (message.toLowerCase().includes("email not confirmed")) {
+        setUnconfirmed(true);
+        setError("Your email isn't verified yet. Check your inbox for the verification link.");
+      } else {
+        setError(message);
+      }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    setResendState("sending");
+    try {
+      await resendVerification(form.email);
+      setResendState("sent");
+    } catch {
+      setResendState("idle");
+      setError("Couldn't resend the email right now — try again in a minute.");
     }
   };
 
