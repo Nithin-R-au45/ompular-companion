@@ -25,12 +25,14 @@ export const Route = createFileRoute("/register")({
 });
 
 function RegisterPage() {
-  const { register } = useAuth();
+  const { register, resendVerification } = useAuth();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({ name: "", email: "", password: "", age: "", bio: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [registered, setRegistered] = useState(false);
+  const [resendState, setResendState] = useState<"idle" | "sending" | "sent">("idle");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -41,9 +43,19 @@ function RegisterPage() {
     setError("");
     setLoading(true);
     try {
-      await register(form.name, form.email, form.password, Number(form.age) || 0, form.bio);
+      const { needsVerification } = await register(
+        form.name,
+        form.email,
+        form.password,
+        Number(form.age) || 0,
+        form.bio,
+      );
       reportAuthEvent("signup", "success", { email: form.email });
-      void navigate({ to: "/dashboard" });
+      if (needsVerification) {
+        setRegistered(true);
+      } else {
+        void navigate({ to: "/dashboard" });
+      }
     } catch (err) {
       reportAuthEvent("signup", "failure", { email: form.email, error: err });
       setError(err instanceof Error ? err.message : "Registration failed. Please try again.");
