@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import RequireAuth from "@/components/RequireAuth";
+import { useNotifications } from "@/hooks/useNotifications";
 import { chooseAnswer, getPromptsStatus, sendPrompt } from "@/lib/ompular.functions";
 import { AI_MODELS, MODEL_INFO, type AiModel, type TrioAnswer } from "@/lib/ompular-core";
 
@@ -52,6 +53,7 @@ function ChatPage() {
   const sendFn = useServerFn(sendPrompt);
   const chooseFn = useServerFn(chooseAnswer);
   const status = useQuery({ queryKey: ["prompts-status"], queryFn: () => statusFn({}) });
+  const { notify, requestPermission } = useNotifications();
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -72,12 +74,19 @@ function ChatPage() {
     setEntries((prev) => [...prev, { role: "user", text }]);
     setInput("");
     setLoading(true);
+    void requestPermission();
     try {
       const res = await sendFn({ data: { promptText: text } });
       setEntries((prev) => [
         ...prev,
         { role: "trio", promptId: res.promptId, answers: res.answers },
       ]);
+      const ok = res.answers.filter((a) => !a.error).length;
+      notify({
+        kind: "ai",
+        title: `⚡ ${ok} answers ready`,
+        preview: "Compare Kimi K3, Qwen 3.8x and DeepSeek v4 Pro, then pick your favourite.",
+      });
       await queryClient.invalidateQueries({ queryKey: ["prompts-status"] });
       await queryClient.invalidateQueries({ queryKey: ["prompts"] });
       await queryClient.invalidateQueries({ queryKey: ["matches"] });
