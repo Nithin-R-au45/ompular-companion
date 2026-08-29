@@ -195,8 +195,21 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
   );
 }
 
+const fallbackNotifications: NotificationsValue = {
+  unreadSenders: new Set<string>(),
+  unreadCount: 0,
+  toast: null,
+  dismissToast: () => {},
+  clearSender: () => {},
+  connected: false,
+  permission: "default",
+  requestPermission: async () => {},
+  notify: () => {},
+};
+
 export function useNotifications() {
   const ctx = useContext(NotificationsContext);
-  if (!ctx) throw new Error("useNotifications must be used within NotificationsProvider");
-  return ctx;
+  // During HMR/module duplication the provider context can be momentarily
+  // missing; fall back to inert defaults instead of crashing the whole app.
+  return ctx ?? fallbackNotifications;
 }
