@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -10,10 +11,21 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { getPeerNames } from "@/lib/ompular.functions";
 
-interface ToastInfo {
-  senderId: string;
-  senderName: string;
+export interface ToastInfo {
+  kind: "dm" | "ai";
+  title: string;
   preview: string;
+  senderId?: string | undefined;
+  link?: string | undefined;
+}
+
+interface NotifyInput {
+  kind: "dm" | "ai";
+  title: string;
+  preview: string;
+  senderId?: string | undefined;
+  link?: string | undefined;
+  system?: boolean;
 }
 
 interface NotificationsValue {
@@ -23,15 +35,67 @@ interface NotificationsValue {
   dismissToast: () => void;
   clearSender: (senderId: string) => void;
   connected: boolean;
+  permission: NotificationPermission | "unsupported";
+  requestPermission: () => Promise<void>;
+  notify: (input: NotifyInput) => void;
 }
 
 const NotificationsContext = createContext<NotificationsValue | undefined>(undefined);
+
+function systemNotify(title: string, body: string) {
+  if (typeof window === "undefined" || !("Notification" in window)) return;
+  if (Notification.permission !== "granted") return;
+  try {
+    const n = new Notification(title, { body, icon: "/favicon.png", badge: "/favicon.png" });
+    n.onclick = () => {
+      window.focus();
+      n.close();
+    };
+  } catch {
+    /* ignore */
+  }
+}
 
 export function NotificationsProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [unreadSenders, setUnreadSenders] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<ToastInfo | null>(null);
   const [connected, setConnected] = useState(false);
+  const [permission, setPermission] = useState<NotificationPermission | "unsupported">("default");
+  const askedRef = useRef(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setPermission("Notification" in window ? Notification.permission : "unsupported");
+  }, []);
+
+  const requestPermission = useCallback(async () => {
+    if (typeof window === "undefined" || !("Notification" in window)) return;
+    if (Notification.permission !== "default" || askedRef.current) {
+      setPermission(Notification.permission);
+      return;
+    }
+    askedRef.current = true;
+    try {
+      const result = await Notification.requestPermission();
+      setPermission(result);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const notify = useCallback((input: NotifyInput) => {
+    setToast({
+      kind: input.kind,
+      title: input.title,
+      preview: input.preview,
+      senderId: input.senderId,
+      link: input.link,
+    });
+    if (input.system !== false && (typeof document === "undefined" || document.hidden || input.kind === "dm")) {
+      systemNotify(input.title, input.preview);
+    }
+  }, []);
 
   const clearSender = useCallback(
     (senderId: string) => {
@@ -85,21 +149,17 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
         (payload) => {
           const msg = payload.new as { sender_id: string; text: string };
           setUnreadSenders((prev) => new Set(prev).add(msg.sender_id));
-          void getPeerNames({ data: { peerIds: [msg.sender_id] } })
-            .then((names) => {
-              setToast({
-                senderId: msg.sender_id,
-                senderName: names[msg.sender_id] ?? "Someone",
-                preview: msg.text.slice(0, 60),
-              });
-            })
-            .catch(() => {
-              setToast({
-                senderId: msg.sender_id,
-                senderName: "Someone",
-                preview: msg.text.slice(0, 60),
-              });
+          const show = (name: string) =>
+            notify({
+              kind: "dm",
+              title: `💬 ${name}`,
+              preview: msg.text.slice(0, 80),
+              senderId: msg.sender_id,
+              link: `/dm/${msg.sender_id}`,
             });
+          void getPeerNames({ data: { peerIds: [msg.sender_id] } })
+            .then((names) => show(names[msg.sender_id] ?? "Someone"))
+            .catch(() => show("Someone"));
         },
       )
       .subscribe((status) => setConnected(status === "SUBSCRIBED"));
@@ -108,7 +168,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       active = false;
       void supabase.removeChannel(channel);
     };
-  }, [user]);
+  }, [user, notify]);
 
   useEffect(() => {
     if (!toast) return;
@@ -125,6 +185,9 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
         dismissToast: () => setToast(null),
         clearSender,
         connected,
+        permission,
+        requestPermission,
+        notify,
       }}
     >
       {children}
