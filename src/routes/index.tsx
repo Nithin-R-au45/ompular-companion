@@ -92,23 +92,24 @@ function Landing() {
         <h2 className="section-title">Powered by the Best AI Models</h2>
         <div className="models-grid">
           <div className="model-card">
-            <div className="model-logo claude">✦</div>
-            <h3>Claude Opus</h3>
-            <p>Anthropic's most thoughtful model — deep, nuanced, reflective.</p>
+            <div className="model-logo kimi">✦</div>
+            <h3>Kimi K3</h3>
+            <p>Deep, nuanced reasoning for the questions that need real thought.</p>
           </div>
           <div className="model-card">
-            <div className="model-logo gpt">⬡</div>
-            <h3>GPT Pro</h3>
-            <p>OpenAI's flagship — comprehensive, analytical, versatile.</p>
+            <div className="model-logo qwen">⬡</div>
+            <h3>Qwen 3.8x</h3>
+            <p>Fast, versatile and analytical — great for everyday asks.</p>
           </div>
           <div className="model-card">
-            <div className="model-logo gemini">◈</div>
-            <h3>Gemini Pro</h3>
-            <p>Google's multimodal powerhouse — creative, wide-ranging, fast.</p>
+            <div className="model-logo deepseek">◈</div>
+            <h3>DeepSeek v4 Pro</h3>
+            <p>Creative, wide-ranging and quick — a sharp second opinion.</p>
           </div>
         </div>
         <p className="models-note">
-          All 3 models share your daily limit of <strong>3 prompts total</strong> — choose wisely!
+          All 3 answer at once and share your daily limit of <strong>3 prompts total</strong> — the
+          super selector helps you pick the best.
         </p>
       </section>
 
