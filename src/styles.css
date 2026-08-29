@@ -433,7 +433,6 @@ input, textarea, select { font-family: 'Nunito', sans-serif; }
 .model-logo { font-size: 40px; margin-bottom: 16px; font-weight: 900; }
 .model-logo.kimi { color: #f97316; }
 .model-logo.qwen { color: #22c55e; }
-.model-logo.deepseek { color: #3b82f6; }
 .model-logo.openai { color: #10a37f; }
 .model-card h3 { color: var(--accent-bright); margin-bottom: 8px; font-weight: 800; }
 .model-card p { color: var(--text-muted); font-size: 14px; }

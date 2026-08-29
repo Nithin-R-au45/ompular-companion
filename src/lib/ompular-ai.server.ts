@@ -4,7 +4,6 @@ import type { AiModel } from "./ompular-core";
 const BACKING_MODEL: Record<AiModel, string> = {
   "kimi-k3": "google/gemini-3.1-pro-preview",
   "qwen-38x": "google/gemini-3.7-flash",
-  "deepseek-v4-pro": "google/gemini-3.5-flash",
   "openai-gpt": "openai/gpt-5.4-mini",
 };
 

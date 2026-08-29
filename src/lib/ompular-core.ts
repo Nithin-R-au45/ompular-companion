@@ -1,6 +1,6 @@
-export type AiModel = "kimi-k3" | "qwen-38x" | "deepseek-v4-pro" | "openai-gpt";
+export type AiModel = "kimi-k3" | "qwen-38x" | "openai-gpt";
 
-export const AI_MODELS: AiModel[] = ["kimi-k3", "qwen-38x", "deepseek-v4-pro", "openai-gpt"];
+export const AI_MODELS: AiModel[] = ["kimi-k3", "qwen-38x", "openai-gpt"];
 
 export const DAILY_PROMPT_LIMIT = 3;
 
@@ -19,12 +19,6 @@ export const MODEL_INFO: Record<
     color: "#22c55e",
     icon: "⬡",
     desc: "Fast answers via Lovable AI Gateway",
-  },
-  "deepseek-v4-pro": {
-    label: "google/gemini-3.5-flash",
-    color: "#3b82f6",
-    icon: "◈",
-    desc: "Balanced reasoning via Lovable AI Gateway",
   },
   "openai-gpt": {
     label: "openai/gpt-5.4-mini",

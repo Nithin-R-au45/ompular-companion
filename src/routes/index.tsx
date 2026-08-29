@@ -8,7 +8,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Chat with google/gemini-3.1-pro-preview, google/gemini-3.7-flash and google/gemini-3.5-flash at once and get matched with real people who share your curiosity. 3 free prompts a day, free match reveals — no pricing, ever.",
+          "Chat with google/gemini-3.1-pro-preview, google/gemini-3.7-flash and openai/gpt-5.4-mini at once and get matched with real people who share your curiosity. 3 free prompts a day, free match reveals — no pricing, ever.",
       },
       { property: "og:title", content: "Ompular — AI-Powered Matchmaking" },
       {
@@ -39,7 +39,7 @@ function Landing() {
           <span className="accent">Peers</span>
         </h1>
         <p className="hero-subtitle">
-          Chat with google/gemini-3.1-pro-preview, google/gemini-3.7-flash and google/gemini-3.5-flash at once
+          Chat with google/gemini-3.1-pro-preview, google/gemini-3.7-flash and openai/gpt-5.4-mini at once
           — and we match you with real people who share your curiosity, passions, and perspective.
         </p>
         <div className="hero-cta">
@@ -64,7 +64,7 @@ function Landing() {
             <h3>Chat with AI</h3>
             <p>
               Use your 3 daily free prompts across google/gemini-3.1-pro-preview, google/gemini-3.7-flash and
-              google/gemini-3.5-flash. Ask anything — career, philosophy, hobbies, dreams.
+              openai/gpt-5.4-mini. Ask anything — career, philosophy, hobbies, dreams.
             </p>
           </div>
           <div className="step-card">
@@ -102,18 +102,13 @@ function Landing() {
             <p>Fast, versatile and analytical — great for everyday asks.</p>
           </div>
           <div className="model-card">
-            <div className="model-logo deepseek">◈</div>
-            <h3>google/gemini-3.5-flash</h3>
-            <p>Creative, wide-ranging and quick — a sharp second opinion.</p>
-          </div>
-          <div className="model-card">
             <div className="model-logo openai">◎</div>
             <h3>openai/gpt-5.4-mini</h3>
             <p>OpenAI's strong mini model for coding, analysis and everyday work.</p>
           </div>
         </div>
         <p className="models-note">
-          All 4 answer at once and share your daily limit of <strong>3 prompts total</strong> — the
+          All 3 answer at once and share your daily limit of <strong>3 prompts total</strong> — the
           super selector helps you pick the best.
         </p>
       </section>
