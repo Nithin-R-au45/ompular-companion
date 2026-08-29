@@ -25,12 +25,14 @@ export const Route = createFileRoute("/register")({
 });
 
 function RegisterPage() {
-  const { register } = useAuth();
+  const { register, resendVerification } = useAuth();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({ name: "", email: "", password: "", age: "", bio: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [registered, setRegistered] = useState(false);
+  const [resendState, setResendState] = useState<"idle" | "sending" | "sent">("idle");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -41,9 +43,19 @@ function RegisterPage() {
     setError("");
     setLoading(true);
     try {
-      await register(form.name, form.email, form.password, Number(form.age) || 0, form.bio);
+      const { needsVerification } = await register(
+        form.name,
+        form.email,
+        form.password,
+        Number(form.age) || 0,
+        form.bio,
+      );
       reportAuthEvent("signup", "success", { email: form.email });
-      void navigate({ to: "/dashboard" });
+      if (needsVerification) {
+        setRegistered(true);
+      } else {
+        void navigate({ to: "/dashboard" });
+      }
     } catch (err) {
       reportAuthEvent("signup", "failure", { email: form.email, error: err });
       setError(err instanceof Error ? err.message : "Registration failed. Please try again.");
@@ -51,6 +63,55 @@ function RegisterPage() {
       setLoading(false);
     }
   };
+
+  const handleResend = async () => {
+    setResendState("sending");
+    try {
+      await resendVerification(form.email);
+      setResendState("sent");
+    } catch {
+      setResendState("idle");
+      setError("Couldn't resend the email right now — try again in a minute.");
+    }
+  };
+
+  if (registered) {
+    return (
+      <div className="auth-page">
+        <div className="auth-card">
+          <div className="auth-header">
+            <Link to="/" className="auth-logo-wrap">
+              <img src={ompularLogo} alt="Ompular" className="auth-logo-img" />
+              <span className="auth-logo-name">ompular</span>
+            </Link>
+            <h1>Verify Your Email ✉️</h1>
+            <p>
+              We sent a verification link to <strong>{form.email}</strong>. Click it to activate
+              your account, then sign in.
+            </p>
+          </div>
+
+          {error && <div className="error-box">{error}</div>}
+
+          <button
+            className="btn-primary btn-full"
+            onClick={handleResend}
+            disabled={resendState !== "idle"}
+          >
+            {resendState === "sending"
+              ? "Sending..."
+              : resendState === "sent"
+                ? "✓ Email resent — check your inbox"
+                : "Resend verification email"}
+          </button>
+
+          <p className="auth-switch">
+            Verified already? <Link to="/login">Sign in</Link>
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="auth-page">

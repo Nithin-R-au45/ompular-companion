@@ -26,7 +26,8 @@ interface AuthContextValue {
     password: string,
     age: number,
     bio: string,
-  ) => Promise<void>;
+  ) => Promise<{ needsVerification: boolean }>;
+  resendVerification: (email: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -89,13 +90,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     age: number,
     bio: string,
   ) => {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/dashboard`,
         data: { name, age: age ? String(age) : "", bio },
       },
+    });
+    if (error) throw new Error(error.message);
+    return { needsVerification: !data.session };
+  };
+
+  const resendVerification = async (email: string) => {
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: { emailRedirectTo: `${window.location.origin}/dashboard` },
     });
     if (error) throw new Error(error.message);
   };
@@ -115,6 +126,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated: !!session,
         login,
         register,
+        resendVerification,
         logout,
       }}
     >

@@ -434,6 +434,7 @@ input, textarea, select { font-family: 'Nunito', sans-serif; }
 .model-logo.kimi { color: #f97316; }
 .model-logo.qwen { color: #22c55e; }
 .model-logo.deepseek { color: #3b82f6; }
+.model-logo.openai { color: #10a37f; }
 .model-card h3 { color: var(--accent-bright); margin-bottom: 8px; font-weight: 800; }
 .model-card p { color: var(--text-muted); font-size: 14px; }
 .models-note { text-align: center; color: var(--text-muted); font-size: 14px; }
@@ -1161,3 +1162,52 @@ input, textarea, select { font-family: 'Nunito', sans-serif; }
 @media (max-width: 860px) {
   .trio-grid { grid-template-columns: 1fr; }
 }
+
+/* ============ Admin Page ============ */
+.admin-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+.admin-header h1 { font-size: 1.8rem; margin-bottom: 0.25rem; }
+.admin-header p { color: #94a3b8; margin-bottom: 1.5rem; }
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.admin-stat-card {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-radius: 12px;
+  padding: 1.25rem;
+  text-align: center;
+}
+.admin-stat-value { font-size: 2rem; font-weight: 700; color: #38bdf8; }
+.admin-stat-label { color: #94a3b8; font-size: 0.85rem; margin-top: 0.25rem; }
+.admin-section { margin-bottom: 2.5rem; }
+.admin-section h2 { font-size: 1.2rem; margin-bottom: 0.75rem; }
+.admin-table-wrap {
+  overflow-x: auto;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 12px;
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  background: rgba(15, 23, 42, 0.6);
+}
+.admin-table th, .admin-table td {
+  padding: 0.65rem 0.9rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.12);
+  white-space: nowrap;
+}
+.admin-table th {
+  background: rgba(59, 130, 246, 0.12);
+  color: #93c5fd;
+  font-weight: 600;
+}
+.admin-row-failure td { color: #fca5a5; }
