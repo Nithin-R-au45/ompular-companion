@@ -2,7 +2,6 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import {
   AI_MODELS,
   DAILY_PROMPT_LIMIT,
-  REVEAL_PRICE,
   extractKeywords,
   jaccardSimilarity,
   type AiModel,
