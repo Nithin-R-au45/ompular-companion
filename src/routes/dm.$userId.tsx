@@ -52,7 +52,7 @@ function formatDate(d: string) {
 function DirectMessagePage() {
   const { userId: peerId } = Route.useParams();
   const { user } = useAuth();
-  const { clearSender, connected } = useNotifications();
+  const { clearSender, connected, requestPermission } = useNotifications();
   const navigate = useNavigate();
   const matchesFn = useServerFn(getMatches);
 
@@ -66,6 +66,7 @@ function DirectMessagePage() {
 
   useEffect(() => {
     clearSender(peerId);
+    void requestPermission();
     matchesFn({})
       .then((list) => {
         const match = list.find((m) => m.userId === peerId && m.revealed);
@@ -73,7 +74,7 @@ function DirectMessagePage() {
         else setError("You can only DM people you have revealed.");
       })
       .catch(() => setError("Could not load match info."));
-  }, [peerId, clearSender, matchesFn]);
+  }, [peerId, clearSender, requestPermission, matchesFn]);
 
   useEffect(() => {
     if (!user) return;
