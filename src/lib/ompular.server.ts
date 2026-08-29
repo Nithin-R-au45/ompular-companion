@@ -233,12 +233,23 @@ export async function revealMatchFor(userId: string, matchedUserId: string) {
 
 export async function getPeerNamesFor(userId: string, peerIds: string[]) {
   if (peerIds.length === 0) return {} as Record<string, string>;
-  const { data: revealed } = await supabaseAdmin
-    .from("payments")
-    .select("matched_user_id")
-    .eq("user_id", userId)
-    .in("matched_user_id", peerIds);
-  const allowed = new Set((revealed ?? []).map((r) => r.matched_user_id));
+  const [{ data: paidReveals }, { data: freeReveals }] = await Promise.all([
+    supabaseAdmin
+      .from("payments")
+      .select("matched_user_id")
+      .eq("user_id", userId)
+      .in("matched_user_id", peerIds),
+    supabaseAdmin
+      .from("matches")
+      .select("matched_id")
+      .eq("seeker_id", userId)
+      .eq("revealed", true)
+      .in("matched_id", peerIds),
+  ]);
+  const allowed = new Set([
+    ...(paidReveals ?? []).map((r) => r.matched_user_id),
+    ...(freeReveals ?? []).map((r) => r.matched_id),
+  ]);
 
   const { data: profiles } = await supabaseAdmin
     .from("profiles")
