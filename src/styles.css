@@ -1103,3 +1103,61 @@ input, textarea, select { font-family: 'Nunito', sans-serif; }
   .refresh-fab { right: 12px; bottom: 12px; padding: 10px; }
   .refresh-fab-label { display: none; }
 }
+
+/* ===== Trio answers (3 models side by side) ===== */
+.trio-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.trio-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  transition: opacity 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+.trio-card-winner {
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-2px);
+}
+.trio-card-dim { opacity: 0.45; }
+.trio-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.trio-ms { opacity: 0.6; font-weight: 500; }
+.trio-card-body {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+.trio-err { color: #f87171; font-size: 0.85rem; }
+.trio-pick {
+  margin-top: auto;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  background: transparent;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.trio-pick:hover { background: rgba(255, 255, 255, 0.07); }
+.trio-winner-tag {
+  margin-top: auto;
+  font-size: 0.8rem;
+  font-weight: 700;
+  opacity: 0.9;
+}
+@media (max-width: 860px) {
+  .trio-grid { grid-template-columns: 1fr; }
+}
