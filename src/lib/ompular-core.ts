@@ -9,22 +9,22 @@ export const MODEL_INFO: Record<
   { label: string; color: string; icon: string; desc: string }
 > = {
   "kimi-k3": {
-    label: "Kimi K3",
+    label: "google/gemini-3.1-pro-preview",
     color: "#f97316",
     icon: "✦",
-    desc: "Thoughtful & nuanced",
+    desc: "Deep reasoning via Lovable AI Gateway",
   },
   "qwen-38x": {
-    label: "Qwen 3.8x",
+    label: "google/gemini-3.7-flash",
     color: "#22c55e",
     icon: "⬡",
-    desc: "Fast & comprehensive",
+    desc: "Fast answers via Lovable AI Gateway",
   },
   "deepseek-v4-pro": {
-    label: "DeepSeek v4 Pro",
+    label: "google/gemini-3.5-flash",
     color: "#3b82f6",
     icon: "◈",
-    desc: "Deep reasoning",
+    desc: "Balanced reasoning via Lovable AI Gateway",
   },
 };
 

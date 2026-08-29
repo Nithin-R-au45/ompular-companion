@@ -8,7 +8,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Chat with Kimi K3, Qwen 3.8x and DeepSeek v4 Pro at once and get matched with real people who share your curiosity. 3 free prompts a day, free match reveals — no pricing, ever.",
+          "Chat with google/gemini-3.1-pro-preview, google/gemini-3.7-flash and google/gemini-3.5-flash at once and get matched with real people who share your curiosity. 3 free prompts a day, free match reveals — no pricing, ever.",
       },
       { property: "og:title", content: "Ompular — AI-Powered Matchmaking" },
       {
@@ -39,8 +39,8 @@ function Landing() {
           <span className="accent">Peers</span>
         </h1>
         <p className="hero-subtitle">
-          Chat with Kimi K3, Qwen 3.8x and DeepSeek v4 Pro at once — and we match you with real people who
-          share your curiosity, passions, and perspective.
+          Chat with google/gemini-3.1-pro-preview, google/gemini-3.7-flash and google/gemini-3.5-flash at once
+          — and we match you with real people who share your curiosity, passions, and perspective.
         </p>
         <div className="hero-cta">
           <Link to="/register" className="btn-primary">
@@ -63,8 +63,8 @@ function Landing() {
             <div className="step-icon">💬</div>
             <h3>Chat with AI</h3>
             <p>
-              Use your 3 daily free prompts across Kimi K3, Qwen 3.8x and DeepSeek v4 Pro. Ask anything —
-              career, philosophy, hobbies, dreams.
+              Use your 3 daily free prompts across google/gemini-3.1-pro-preview, google/gemini-3.7-flash and
+              google/gemini-3.5-flash. Ask anything — career, philosophy, hobbies, dreams.
             </p>
           </div>
           <div className="step-card">
@@ -93,17 +93,17 @@ function Landing() {
         <div className="models-grid">
           <div className="model-card">
             <div className="model-logo kimi">✦</div>
-            <h3>Kimi K3</h3>
+            <h3>google/gemini-3.1-pro-preview</h3>
             <p>Deep, nuanced reasoning for the questions that need real thought.</p>
           </div>
           <div className="model-card">
             <div className="model-logo qwen">⬡</div>
-            <h3>Qwen 3.8x</h3>
+            <h3>google/gemini-3.7-flash</h3>
             <p>Fast, versatile and analytical — great for everyday asks.</p>
           </div>
           <div className="model-card">
             <div className="model-logo deepseek">◈</div>
-            <h3>DeepSeek v4 Pro</h3>
+            <h3>google/gemini-3.5-flash</h3>
             <p>Creative, wide-ranging and quick — a sharp second opinion.</p>
           </div>
         </div>

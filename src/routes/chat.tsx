@@ -14,12 +14,12 @@ export const Route = createFileRoute("/chat")({
       {
         name: "description",
         content:
-          "Ask once, get answers from Kimi K3, Qwen 3.8x and DeepSeek v4 Pro at the same time — then pick the best.",
+          "Ask once, get answers from google/gemini-3.1-pro-preview, google/gemini-3.7-flash and google/gemini-3.5-flash at the same time — then pick the best.",
       },
       { property: "og:title", content: "Triple AI Chat — Ompular" },
       {
         property: "og:description",
-        content: "Three pro models answer simultaneously. You pick the winner.",
+        content: "Three Gemini models answer simultaneously. You pick the winner.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -85,7 +85,7 @@ function ChatPage() {
       notify({
         kind: "ai",
         title: `⚡ ${ok} answers ready`,
-        preview: "Compare Kimi K3, Qwen 3.8x and DeepSeek v4 Pro, then pick your favourite.",
+        preview: "Compare google/gemini-3.1-pro-preview, google/gemini-3.7-flash and google/gemini-3.5-flash, then pick your favourite.",
       });
       await queryClient.invalidateQueries({ queryKey: ["prompts-status"] });
       await queryClient.invalidateQueries({ queryKey: ["prompts"] });
@@ -190,8 +190,8 @@ function ChatPage() {
               <div className="welcome-icon">⚡</div>
               <h3>Ask once, get three expert answers</h3>
               <p>
-                Kimi K3, Qwen 3.8x and DeepSeek v4 Pro all respond at the same time. Compare them
-                side by side and crown the winner.
+                google/gemini-3.1-pro-preview, google/gemini-3.7-flash and google/gemini-3.5-flash all
+                respond at the same time. Compare them side by side and crown the winner.
               </p>
               <div className="starter-chips">
                 {[
