@@ -32,9 +32,10 @@ export const MODEL_INFO: Record<
 export interface TrioAnswer {
   model: AiModel;
   text: string;
-  error?: string;
+  error?: string | undefined;
   ms: number;
 }
+
 
 export interface TrioResult {
   promptId: string;
