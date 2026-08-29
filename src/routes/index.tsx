@@ -8,7 +8,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Chat with Kimi K3, Qwen 3.8x and DeepSeek v4 Pro at once and get matched with real people who share your curiosity. 3 free prompts a day, free match reveals — no pricing, ever.",
+          "Chat with google/gemini-3.1-pro-preview, google/gemini-3.7-flash and google/gemini-3.5-flash at once and get matched with real people who share your curiosity. 3 free prompts a day, free match reveals — no pricing, ever.",
       },
       { property: "og:title", content: "Ompular — AI-Powered Matchmaking" },
       {
