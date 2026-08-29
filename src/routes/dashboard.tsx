@@ -124,7 +124,7 @@ function DashboardPage() {
           <div className="action-icon">🤖</div>
           <div>
             <h3>AI Chat</h3>
-            <p>Talk to Claude, GPT or Gemini</p>
+            <p>Talk to Kimi K3, Qwen and DeepSeek at once</p>
           </div>
           <span className="action-arrow">→</span>
         </Link>

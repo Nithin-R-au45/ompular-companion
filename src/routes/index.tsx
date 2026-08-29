@@ -8,7 +8,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Chat with Claude Opus, GPT Pro or Gemini Pro and get matched with real people who share your curiosity. 3 free prompts a day, ₹9 per reveal.",
+          "Chat with Kimi K3, Qwen 3.8x and DeepSeek v4 Pro at once and get matched with real people who share your curiosity. 3 free prompts a day, ₹9 per reveal.",
       },
       { property: "og:title", content: "Ompular — AI-Powered Matchmaking" },
       {
@@ -39,7 +39,7 @@ function Landing() {
           <span className="accent">Peers</span>
         </h1>
         <p className="hero-subtitle">
-          Chat with Claude Opus, GPT Pro, or Gemini Pro — and we match you with real people who
+          Chat with Kimi K3, Qwen 3.8x and DeepSeek v4 Pro at once — and we match you with real people who
           share your curiosity, passions, and perspective.
         </p>
         <div className="hero-cta">
@@ -63,7 +63,7 @@ function Landing() {
             <div className="step-icon">💬</div>
             <h3>Chat with AI</h3>
             <p>
-              Use your 3 daily free prompts with Claude Opus, GPT Pro, or Gemini Pro. Ask anything —
+              Use your 3 daily free prompts across Kimi K3, Qwen 3.8x and DeepSeek v4 Pro. Ask anything —
               career, philosophy, hobbies, dreams.
             </p>
           </div>
