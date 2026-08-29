@@ -29,14 +29,19 @@ export default function Navbar() {
           className="notif-toast"
           onClick={() => {
             dismissToast();
-            void navigate({ to: "/dm/$userId", params: { userId: toast.senderId } });
+            if (toast.kind === "dm" && toast.senderId) {
+              void navigate({ to: "/dm/$userId", params: { userId: toast.senderId } });
+            } else if (toast.kind === "ai") {
+              void navigate({ to: "/chat" });
+            }
           }}
         >
-          <div className="notif-toast-avatar">{toast.senderName[0]?.toUpperCase()}</div>
+          <div className="notif-toast-avatar">{toast.kind === "ai" ? "⚡" : toast.title.replace(/[^A-Za-z]/g, "")[0]?.toUpperCase() ?? "?"}</div>
           <div className="notif-toast-body">
-            <div className="notif-toast-name">💬 {toast.senderName}</div>
+            <div className="notif-toast-name">{toast.title}</div>
             <div className="notif-toast-preview">{toast.preview}</div>
           </div>
+
           <button
             className="notif-toast-close"
             onClick={(e) => {
