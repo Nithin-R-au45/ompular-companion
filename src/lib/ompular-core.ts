@@ -1,6 +1,6 @@
-export type AiModel = "claude-opus" | "gpt-pro" | "gemini-pro";
+export type AiModel = "kimi-k3" | "qwen-38x" | "deepseek-v4-pro";
 
-export const AI_MODELS: AiModel[] = ["claude-opus", "gpt-pro", "gemini-pro"];
+export const AI_MODELS: AiModel[] = ["kimi-k3", "qwen-38x", "deepseek-v4-pro"];
 
 export const DAILY_PROMPT_LIMIT = 3;
 export const REVEAL_PRICE = 9;
@@ -9,34 +9,37 @@ export const MODEL_INFO: Record<
   AiModel,
   { label: string; color: string; icon: string; desc: string }
 > = {
-  "claude-opus": {
-    label: "Claude Opus",
+  "kimi-k3": {
+    label: "Kimi K3",
     color: "#f97316",
     icon: "✦",
     desc: "Thoughtful & nuanced",
   },
-  "gpt-pro": {
-    label: "GPT Pro",
+  "qwen-38x": {
+    label: "Qwen 3.8x",
     color: "#22c55e",
     icon: "⬡",
-    desc: "Analytical & comprehensive",
+    desc: "Fast & comprehensive",
   },
-  "gemini-pro": {
-    label: "Gemini Pro",
+  "deepseek-v4-pro": {
+    label: "DeepSeek v4 Pro",
     color: "#3b82f6",
     icon: "◈",
-    desc: "Creative & wide-ranging",
+    desc: "Deep reasoning",
   },
 };
 
-export const AI_SIMULATORS: Record<AiModel, (text: string) => string> = {
-  "claude-opus": (text) =>
-    `[Claude Opus] Thoughtful response to: "${text.slice(0, 60)}..." — I find this topic deeply meaningful. Let's explore it together.`,
-  "gpt-pro": (text) =>
-    `[GPT Pro] Smart analysis of: "${text.slice(0, 60)}..." — Here's a comprehensive breakdown with multiple perspectives.`,
-  "gemini-pro": (text) =>
-    `[Gemini Pro] Creative take on: "${text.slice(0, 60)}..." — This reminds me of interconnected ideas across science and art.`,
-};
+export interface TrioAnswer {
+  model: AiModel;
+  text: string;
+  error?: string;
+  ms: number;
+}
+
+export interface TrioResult {
+  promptId: string;
+  answers: TrioAnswer[];
+}
 
 const STOPWORDS = new Set([
   "the", "a", "an", "is", "in", "it", "to", "of", "and", "or",
