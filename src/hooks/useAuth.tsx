@@ -26,7 +26,8 @@ interface AuthContextValue {
     password: string,
     age: number,
     bio: string,
-  ) => Promise<void>;
+  ) => Promise<{ needsVerification: boolean }>;
+  resendVerification: (email: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
