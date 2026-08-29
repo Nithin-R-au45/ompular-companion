@@ -67,7 +67,7 @@ function MatchesPage() {
       setSuccessMsg(res.message);
       await queryClient.invalidateQueries({ queryKey: ["matches"] });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Payment failed. Please try again.");
+      setError(err instanceof Error ? err.message : "Reveal failed. Please try again.");
     } finally {
       setRevealing(null);
       setConfirmId(null);
@@ -119,7 +119,7 @@ function MatchesPage() {
             <span className="dot-sep">·</span>
             <span>{matches.filter((m) => m.revealed).length} revealed</span>
             <span className="dot-sep">·</span>
-            <span>₹9 per reveal</span>
+            <span>Reveals are free</span>
           </div>
 
           <div className="matches-grid">
@@ -145,7 +145,7 @@ function MatchesPage() {
                       <h3 className="match-name blurred">████████</h3>
                       <p className="match-email blurred">████████@███.com</p>
                       <p className="match-hidden-note">
-                        Pay ₹9 to see this person's name and email
+                        Reveal for free to see this person's name and email
                       </p>
                     </>
                   )}
@@ -167,14 +167,14 @@ function MatchesPage() {
                 {!match.revealed &&
                   (confirmId === match.userId ? (
                     <div className="confirm-area">
-                      <p>Pay ₹9 to reveal this match?</p>
+                      <p>Reveal this match for free?</p>
                       <div className="confirm-buttons">
                         <button
                           className="btn-primary"
                           onClick={() => void handleReveal(match.userId)}
                           disabled={revealing === match.userId}
                         >
-                          {revealing === match.userId ? "Processing..." : "Yes, Pay ₹9"}
+                          {revealing === match.userId ? "Revealing..." : "Yes, Reveal"}
                         </button>
                         <button className="btn-outline" onClick={() => setConfirmId(null)}>
                           Cancel
@@ -183,7 +183,7 @@ function MatchesPage() {
                     </div>
                   ) : (
                     <button className="btn-reveal" onClick={() => setConfirmId(match.userId)}>
-                      🔓 Reveal for ₹9
+                      🔓 Reveal for Free
                     </button>
                   ))}
 
