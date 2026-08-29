@@ -47,29 +47,46 @@ export async function listPromptsFor(userId: string) {
   }));
 }
 
-export async function sendPromptFor(
-  userId: string,
-  model: AiModel,
-  promptText: string,
-): Promise<{ responseText: string }> {
-  if (!AI_MODELS.includes(model)) {
-    throw new Error("Invalid model. Choose: claude-opus, gpt-pro, gemini-pro");
-  }
+export async function sendPromptFor(userId: string, promptText: string): Promise<TrioResult> {
   const status = await getPromptsStatusFor(userId);
   if (status.remaining <= 0) {
     throw new Error("You have used all 3 free prompts for today. Come back tomorrow!");
   }
 
-  const responseText = AI_SIMULATORS[model](promptText);
+  const answers: TrioAnswer[] = await Promise.all(
+    AI_MODELS.map(async (m) => {
+      const started = Date.now();
+      try {
+        const res = await askModel(m, promptText);
+        return { model: m, text: res.text, error: res.error, ms: Date.now() - started };
+      } catch (err) {
+        return {
+          model: m,
+          text: "",
+          error: err instanceof Error ? err.message : "Model failed.",
+          ms: Date.now() - started,
+        };
+      }
+    }),
+  );
+
+  if (answers.every((a) => !a.text)) {
+    throw new Error(answers.find((a) => a.error)?.error ?? "All models failed to answer.");
+  }
+
   const keywords = extractKeywords(promptText);
 
-  const { error } = await supabaseAdmin.from("prompts").insert({
-    user_id: userId,
-    model,
-    prompt_text: promptText,
-    response_text: responseText,
-    keywords,
-  });
+  const { data: inserted, error } = await supabaseAdmin
+    .from("prompts")
+    .insert({
+      user_id: userId,
+      model: "trio",
+      prompt_text: promptText,
+      response_text: JSON.stringify(answers),
+      keywords,
+    })
+    .select("id")
+    .single();
   if (error) throw new Error(error.message);
 
   const { data: profile } = await supabaseAdmin
@@ -89,8 +106,39 @@ export async function sendPromptFor(
 
   await supabaseAdmin.from("profiles").update({ interests: merged }).eq("id", userId);
 
-  return { responseText };
+  return { promptId: inserted.id, answers };
 }
+
+export async function chooseAnswerFor(userId: string, promptId: string, model: AiModel) {
+  if (!AI_MODELS.includes(model)) throw new Error("Invalid model.");
+
+  const { data: row, error } = await supabaseAdmin
+    .from("prompts")
+    .select("id, response_text, user_id")
+    .eq("id", promptId)
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!row) throw new Error("Prompt not found.");
+
+  let chosen = "";
+  try {
+    const parsed = JSON.parse(row.response_text ?? "[]") as TrioAnswer[];
+    chosen = parsed.find((a) => a.model === model)?.text ?? "";
+  } catch {
+    chosen = "";
+  }
+  if (!chosen) throw new Error("That answer is no longer available.");
+
+  const { error: upErr } = await supabaseAdmin
+    .from("prompts")
+    .update({ model, response_text: chosen })
+    .eq("id", promptId);
+  if (upErr) throw new Error(upErr.message);
+
+  return { success: true };
+}
+
 
 export async function getMatchesFor(userId: string): Promise<MatchItem[]> {
   const { data: me } = await supabaseAdmin
