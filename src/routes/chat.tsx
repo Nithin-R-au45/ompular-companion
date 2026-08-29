@@ -3,8 +3,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import RequireAuth from "@/components/RequireAuth";
-import { getPromptsStatus, sendPrompt } from "@/lib/ompular.functions";
-import { AI_MODELS, MODEL_INFO, type AiModel } from "@/lib/ompular-core";
+import { useNotifications } from "@/hooks/useNotifications";
+import { chooseAnswer, getPromptsStatus, sendPrompt } from "@/lib/ompular.functions";
+import { AI_MODELS, MODEL_INFO, type AiModel, type TrioAnswer } from "@/lib/ompular-core";
 
 export const Route = createFileRoute("/chat")({
   head: () => ({
@@ -12,12 +13,13 @@ export const Route = createFileRoute("/chat")({
       { title: "AI Chat — Ompular" },
       {
         name: "description",
-        content: "Chat with Claude Opus, GPT Pro or Gemini Pro. 3 free prompts every day.",
+        content:
+          "Ask once, get answers from Kimi K3, Qwen 3.8x and DeepSeek v4 Pro at the same time — then pick the best.",
       },
-      { property: "og:title", content: "AI Chat — Ompular" },
+      { property: "og:title", content: "Triple AI Chat — Ompular" },
       {
         property: "og:description",
-        content: "Use your daily prompts to talk to AI and find your matches.",
+        content: "Three pro models answer simultaneously. You pick the winner.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -30,16 +32,18 @@ export const Route = createFileRoute("/chat")({
   ),
 });
 
-interface ChatMessage {
-  role: "user" | "ai";
-  text: string;
-  model?: AiModel;
+interface TrioTurn {
+  role: "trio";
+  promptId: string;
+  answers: TrioAnswer[];
+  chosen?: AiModel;
 }
 
+type ChatEntry = { role: "user"; text: string } | TrioTurn;
+
 function ChatPage() {
-  const [model, setModel] = useState<AiModel>("claude-opus");
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [entries, setEntries] = useState<ChatEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -47,11 +51,13 @@ function ChatPage() {
   const queryClient = useQueryClient();
   const statusFn = useServerFn(getPromptsStatus);
   const sendFn = useServerFn(sendPrompt);
+  const chooseFn = useServerFn(chooseAnswer);
   const status = useQuery({ queryKey: ["prompts-status"], queryFn: () => statusFn({}) });
+  const { notify, requestPermission } = useNotifications();
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [entries, loading]);
 
   const remaining = status.data?.remaining ?? 0;
   const used = status.data?.used ?? 0;
@@ -65,20 +71,42 @@ function ChatPage() {
       return;
     }
     setError("");
-    setMessages((prev) => [...prev, { role: "user", text }]);
+    setEntries((prev) => [...prev, { role: "user", text }]);
     setInput("");
     setLoading(true);
+    void requestPermission();
     try {
-      const res = await sendFn({ data: { model, promptText: text } });
-      setMessages((prev) => [...prev, { role: "ai", text: res.responseText, model }]);
+      const res = await sendFn({ data: { promptText: text } });
+      setEntries((prev) => [
+        ...prev,
+        { role: "trio", promptId: res.promptId, answers: res.answers },
+      ]);
+      const ok = res.answers.filter((a) => !a.error).length;
+      notify({
+        kind: "ai",
+        title: `⚡ ${ok} answers ready`,
+        preview: "Compare Kimi K3, Qwen 3.8x and DeepSeek v4 Pro, then pick your favourite.",
+      });
       await queryClient.invalidateQueries({ queryKey: ["prompts-status"] });
       await queryClient.invalidateQueries({ queryKey: ["prompts"] });
       await queryClient.invalidateQueries({ queryKey: ["matches"] });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
-      setMessages((prev) => prev.slice(0, -1));
+      setEntries((prev) => prev.slice(0, -1));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const pick = async (promptId: string, model: AiModel) => {
+    setEntries((prev) =>
+      prev.map((e) => (e.role === "trio" && e.promptId === promptId ? { ...e, chosen: model } : e)),
+    );
+    try {
+      await chooseFn({ data: { promptId, model } });
+      await queryClient.invalidateQueries({ queryKey: ["prompts"] });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not save your pick.");
     }
   };
 
@@ -92,16 +120,11 @@ function ChatPage() {
   return (
     <div className="chat-page">
       <aside className="chat-sidebar">
-        <h2>Choose Model</h2>
-        <p className="sidebar-note">All 3 models share your daily limit</p>
+        <h2>The Trio</h2>
+        <p className="sidebar-note">All 3 pro models answer every prompt at once</p>
         <div className="model-list">
           {AI_MODELS.map((m) => (
-            <button
-              key={m}
-              className={`model-option ${model === m ? "active" : ""}`}
-              onClick={() => setModel(m)}
-              style={model === m ? { borderColor: MODEL_INFO[m].color } : {}}
-            >
+            <div key={m} className="model-option active" style={{ borderColor: MODEL_INFO[m].color }}>
               <span className="model-icon" style={{ color: MODEL_INFO[m].color }}>
                 {MODEL_INFO[m].icon}
               </span>
@@ -109,7 +132,7 @@ function ChatPage() {
                 <div className="model-name">{MODEL_INFO[m].label}</div>
                 <div className="model-desc">{MODEL_INFO[m].desc}</div>
               </div>
-            </button>
+            </div>
           ))}
         </div>
 
@@ -123,12 +146,12 @@ function ChatPage() {
           <div className="counter-text">
             <span className="accent">{remaining}</span> / {status.data?.limit ?? 3} remaining
           </div>
-          <p className="counter-note">Resets at midnight</p>
+          <p className="counter-note">One run of all 3 models = 1 prompt</p>
         </div>
 
         <div className="match-tip">
           <span>💡</span>
-          <p>Each prompt you send helps us find better matches for you.</p>
+          <p>Pick the best answer — the super selector learns what you like.</p>
         </div>
       </aside>
 
@@ -136,17 +159,14 @@ function ChatPage() {
         <div className="chat-mobile-bar">
           <div className="chat-mobile-models">
             {AI_MODELS.map((m) => (
-              <button
+              <div
                 key={m}
-                className={`chat-mobile-model-btn ${model === m ? "active" : ""}`}
-                onClick={() => setModel(m)}
-                style={
-                  model === m ? { borderColor: MODEL_INFO[m].color, color: MODEL_INFO[m].color } : {}
-                }
+                className="chat-mobile-model-btn active"
+                style={{ borderColor: MODEL_INFO[m].color, color: MODEL_INFO[m].color }}
               >
                 <span>{MODEL_INFO[m].icon}</span>
                 <span className="chat-mobile-model-label">{MODEL_INFO[m].label}</span>
-              </button>
+              </div>
             ))}
           </div>
           <div className="chat-mobile-counter">
@@ -158,23 +178,20 @@ function ChatPage() {
         </div>
 
         <div className="chat-topbar">
-          <div className="chat-model-badge" style={{ borderColor: MODEL_INFO[model].color }}>
-            <span style={{ color: MODEL_INFO[model].color }}>{MODEL_INFO[model].icon}</span>
-            {MODEL_INFO[model].label}
+          <div className="chat-model-badge" style={{ borderColor: "var(--accent, #3b82f6)" }}>
+            <span>⚡</span> Super Selector
           </div>
-          <span className="chat-model-desc">{MODEL_INFO[model].desc}</span>
+          <span className="chat-model-desc">3 pro models answer simultaneously — you pick the best</span>
         </div>
 
         <div className="chat-messages">
-          {messages.length === 0 && (
+          {entries.length === 0 && (
             <div className="chat-welcome">
-              <div className="welcome-icon" style={{ color: MODEL_INFO[model].color }}>
-                {MODEL_INFO[model].icon}
-              </div>
-              <h3>Start a conversation with {MODEL_INFO[model].label}</h3>
+              <div className="welcome-icon">⚡</div>
+              <h3>Ask once, get three expert answers</h3>
               <p>
-                Ask about anything — your passions, career questions, life advice, or what you're
-                curious about. Your chats help find people like you.
+                Kimi K3, Qwen 3.8x and DeepSeek v4 Pro all respond at the same time. Compare them
+                side by side and crown the winner.
               </p>
               <div className="starter-chips">
                 {[
@@ -191,27 +208,65 @@ function ChatPage() {
             </div>
           )}
 
-          {messages.map((msg, i) => (
-            <div key={i} className={`message ${msg.role}`}>
-              {msg.role === "ai" && msg.model && (
-                <div className="message-model-tag" style={{ color: MODEL_INFO[msg.model].color }}>
-                  {MODEL_INFO[msg.model].icon} {MODEL_INFO[msg.model].label}
-                </div>
-              )}
-              <div className="message-bubble">{msg.text}</div>
-            </div>
-          ))}
+          {entries.map((entry, i) =>
+            entry.role === "user" ? (
+              <div key={i} className="message user">
+                <div className="message-bubble">{entry.text}</div>
+              </div>
+            ) : (
+              <div key={i} className="trio-grid">
+                {entry.answers.map((a) => {
+                  const info = MODEL_INFO[a.model];
+                  const isChosen = entry.chosen === a.model;
+                  const dimmed = entry.chosen && !isChosen;
+                  return (
+                    <div
+                      key={a.model}
+                      className={`trio-card ${isChosen ? "trio-card-winner" : ""} ${dimmed ? "trio-card-dim" : ""}`}
+                      style={isChosen ? { borderColor: info.color } : {}}
+                    >
+                      <div className="trio-card-head" style={{ color: info.color }}>
+                        <span>
+                          {info.icon} {info.label}
+                        </span>
+                        <span className="trio-ms">{(a.ms / 1000).toFixed(1)}s</span>
+                      </div>
+                      <div className="trio-card-body">
+                        {a.error ? <span className="trio-err">{a.error}</span> : a.text}
+                      </div>
+                      {!entry.chosen && !a.error && (
+                        <button
+                          className="trio-pick"
+                          style={{ borderColor: info.color, color: info.color }}
+                          onClick={() => void pick(entry.promptId, a.model)}
+                        >
+                          Pick this answer
+                        </button>
+                      )}
+                      {isChosen && <div className="trio-winner-tag">★ Your pick</div>}
+                    </div>
+                  );
+                })}
+              </div>
+            ),
+          )}
 
           {loading && (
-            <div className="message ai">
-              <div className="message-model-tag" style={{ color: MODEL_INFO[model].color }}>
-                {MODEL_INFO[model].icon} {MODEL_INFO[model].label}
-              </div>
-              <div className="message-bubble typing">
-                <span />
-                <span />
-                <span />
-              </div>
+            <div className="trio-grid">
+              {AI_MODELS.map((m) => (
+                <div key={m} className="trio-card">
+                  <div className="trio-card-head" style={{ color: MODEL_INFO[m].color }}>
+                    <span>
+                      {MODEL_INFO[m].icon} {MODEL_INFO[m].label}
+                    </span>
+                  </div>
+                  <div className="message-bubble typing">
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+                </div>
+              ))}
             </div>
           )}
           <div ref={bottomRef} />
@@ -224,7 +279,7 @@ function ChatPage() {
             className="chat-input"
             placeholder={
               canSend
-                ? `Ask ${MODEL_INFO[model].label} anything... (Enter to send)`
+                ? "Ask all three models anything... (Enter to send)"
                 : "No prompts remaining today"
             }
             value={input}
