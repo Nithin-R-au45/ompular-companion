@@ -79,6 +79,21 @@ function LoginPage() {
 
         {error && <div className="error-box">{error}</div>}
 
+        {unconfirmed && (
+          <button
+            className="btn-primary btn-full"
+            onClick={handleResend}
+            disabled={resendState !== "idle"}
+            style={{ marginBottom: "1rem" }}
+          >
+            {resendState === "sending"
+              ? "Sending..."
+              : resendState === "sent"
+                ? "✓ Verification email resent"
+                : "Resend verification email"}
+          </button>
+        )}
+
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
             <label>Email</label>
