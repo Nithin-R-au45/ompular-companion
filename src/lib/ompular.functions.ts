@@ -19,17 +19,28 @@ export const listPrompts = createServerFn({ method: "GET" })
 export const sendPrompt = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data) =>
+    z.object({ promptText: z.string().min(1).max(2000) }).parse(data),
+  )
+  .handler(async ({ data, context }) => {
+    const { sendPromptFor } = await import("./ompular.server");
+    return sendPromptFor(context.userId, data.promptText);
+  });
+
+export const chooseAnswer = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data) =>
     z
       .object({
-        model: z.enum(["claude-opus", "gpt-pro", "gemini-pro"]),
-        promptText: z.string().min(1).max(2000),
+        promptId: z.string().uuid(),
+        model: z.enum(["kimi-k3", "qwen-38x", "deepseek-v4-pro"]),
       })
       .parse(data),
   )
   .handler(async ({ data, context }) => {
-    const { sendPromptFor } = await import("./ompular.server");
-    return sendPromptFor(context.userId, data.model, data.promptText);
+    const { chooseAnswerFor } = await import("./ompular.server");
+    return chooseAnswerFor(context.userId, data.promptId, data.model);
   });
+
 
 export const getMatches = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
