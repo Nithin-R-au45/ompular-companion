@@ -14,7 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import Navbar from "@/components/Navbar";
 import RefreshFab from "@/components/RefreshFab";
 import { AuthProvider } from "@/hooks/useAuth";
-import { NotificationsProvider } from "@/hooks/useNotifications";
+import { NotificationsWrapper } from "@/components/NotificationsWrapper";
 
 
 function NotFoundComponent() {
