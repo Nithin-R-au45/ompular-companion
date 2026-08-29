@@ -32,7 +32,7 @@ export const chooseAnswer = createServerFn({ method: "POST" })
     z
       .object({
         promptId: z.string().uuid(),
-        model: z.enum(["kimi-k3", "qwen-38x", "deepseek-v4-pro"]),
+        model: z.enum(["kimi-k3", "qwen-38x", "openai-gpt"]),
       })
       .parse(data),
   )

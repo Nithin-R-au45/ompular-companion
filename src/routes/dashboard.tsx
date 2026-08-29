@@ -124,7 +124,7 @@ function DashboardPage() {
           <div className="action-icon">🤖</div>
           <div>
             <h3>AI Chat</h3>
-            <p>Talk to google/gemini-3.1-pro-preview, google/gemini-3.7-flash and google/gemini-3.5-flash at once</p>
+            <p>Talk to google/gemini-3.1-pro-preview, google/gemini-3.7-flash and openai/gpt-5.4-mini at once</p>
           </div>
           <span className="action-arrow">→</span>
         </Link>
