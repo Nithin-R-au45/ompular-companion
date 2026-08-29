@@ -106,9 +106,14 @@ function Landing() {
             <h3>google/gemini-3.5-flash</h3>
             <p>Creative, wide-ranging and quick — a sharp second opinion.</p>
           </div>
+          <div className="model-card">
+            <div className="model-logo openai">◎</div>
+            <h3>openai/gpt-5.4-mini</h3>
+            <p>OpenAI's strong mini model for coding, analysis and everyday work.</p>
+          </div>
         </div>
         <p className="models-note">
-          All 3 answer at once and share your daily limit of <strong>3 prompts total</strong> — the
+          All 4 answer at once and share your daily limit of <strong>3 prompts total</strong> — the
           super selector helps you pick the best.
         </p>
       </section>
