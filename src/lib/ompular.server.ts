@@ -1,7 +1,6 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import {
   AI_MODELS,
-  AI_SIMULATORS,
   DAILY_PROMPT_LIMIT,
   REVEAL_PRICE,
   extractKeywords,
@@ -9,7 +8,11 @@ import {
   type AiModel,
   type MatchItem,
   type PromptsStatus,
+  type TrioAnswer,
+  type TrioResult,
 } from "./ompular-core";
+import { askModel } from "./ompular-ai.server";
+
 
 function startOfToday(): string {
   const d = new Date();
